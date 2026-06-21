@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Asset {
+  id              String     @id @default(cuid())
+  title           String
+  slug            String     @unique
+  description     String     @default("")
+  type            String
+  previewType     String
+  previewUrl      String
+  videoUrl        String?
+  googleDriveLink String
+  displayPrice    String?
+  published       Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  categoryId      String?
+  category        Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags            Tag[]
+  reviews         Review[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String   @default("")
+  showOnHome  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  assets      Asset[]
+}
+
+model Tag {
+  id     String  @id @default(cuid())
+  name   String
+  slug   String  @unique
+  color  String  @default("#6366f1")
+  assets Asset[]
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  assetId      String
+  asset        Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  username     String
+  email        String
+  rating       Int
+  comment      String
+  profileImage String?
+  socialLinks  String?
+  verified     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id              String @id @default("default")
+  brandName       String @default("PrimeAutomation")
+  brandDescription String @default("")
+  socialLinks     String @default("[]")
+}
