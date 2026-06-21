@@ -6,11 +6,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
-  experimental: {
-    turbo: {
-      root: process.cwd(),
-    },
-  },
 };
 
 export default nextConfig;
